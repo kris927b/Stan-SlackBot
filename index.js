@@ -117,12 +117,13 @@ function getMeme(user, category) {
 }
 
 function sendMessage(fn, text, channel, user) {
+    let msg = ''
     if (text.includes("of") || text.includes("with")) {
         let arr = text.split(" ");
         let index = arr.findIndex(findWithOf);
-        let msg = fn(user, arr[index+1]);
+        msg = fn(user, arr[index+1]);
     } else {
-        let msg = fn(user, 'random');
+        msg = fn(user, 'random');
     }
     bot.postMessage(channel, msg);
 }

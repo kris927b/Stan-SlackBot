@@ -14,7 +14,7 @@
     "Post"
   ],
   "author": "Kristian Nørgaard Jensen",
-  "license": "ISC",
+  "license": "GNU",
   "dependencies": {
     "dotenv": "^6.2.0",
     "ejs": "^2.6.1",

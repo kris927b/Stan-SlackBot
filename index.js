@@ -3,9 +3,9 @@ let giphy = require('giphy-api')();
 let request = require('request');
 let express = require('express');
 require('dotenv').config();
-const path = require('path')
+const path = require('path');
 
-const channel = "random";
+
 let user_list = {};
 const greetings = [
     "Hey dude! :stan:", 
@@ -66,32 +66,33 @@ bot.on("message", (data) => {
     }
 });
 
-function findOf(key) {
-    return key === 'of';
+function sendMessage(channel, msg) {
+    if (process.env.TEST) {
+        bot.postMessage(channel, msg);
+    } else {
+        bot.postMessage(channel, msg);
+    }
 }
 
-function findWith(key) {
-    return key === 'with';
+function findWithOf(key) {
+    return key === 'of' || key === 'with';
 }
 
 function handleResponse(data) {
     if (data.text.includes(user_list["stan"])) {
         console.log("Mentioned Stan \u{1F916}");
         let text = data.text.toLowerCase();
+        console.log(data);
         if (text.includes("hi") || text.includes("hello") || text.includes("hey")) {
             sendGreeting();
         }
         if (text.includes("send a gif") || text.includes("send gif")) {
-            if (text.includes("of")) {
+            if (text.includes("of") || text.includes("with")) {
                 let arr = text.split(" ");
-                let index = arr.findIndex(findOf);
-                sendGif(data.user, arr[index+1]);
-            } else if (text.includes("with")) {
-                let arr = text.split(" ");
-                let index = arr.findIndex(findWith);
-                sendGif(data.user, arr[index+1]);
+                let index = arr.findIndex(findWithOf);
+                sendGif(data.user, arr[index+1], data.channel);
             } else {
-                sendGif(data.user, 'random');
+                sendGif(data.user, 'random', data.channel);
             }
         }
         if (text.includes("send a meme") || text.includes("send meme")) {
@@ -102,31 +103,31 @@ function handleResponse(data) {
 
 function sendGreeting() {
     let greeting = getGreeting();
-    bot.postMessageToChannel(channel, greeting);
+    sendMessage(channel, greeting);
 }
 
 function getGreeting() {
     return greetings[Math.floor(Math.random() * greetings.length)];
 }
 
-function sendGif(user, category) {
+function sendGif(user, category, ch) {
     giphy.random({tag: category, fmt: 'json'}, function (err, res) {
         if (err) {
             console.error(err);
         }
         let gif = res.data.url;
         let msg = "Here you go <@"+user+"> :robot_face: \n" + gif;
-        bot.postMessageToChannel(channel, msg);
+        sendMessage(ch, msg);
     });
 }
 
-function sendMeme(user, category) {
+function sendMeme(user, category, ch) {
     request(memeUrl + category + memeUrl1 + memeAPI, { json: true }, (err, res, body) => {
         if (err) { return console.error(err); }
         let result = body.result;
         let meme = result[Math.floor(Math.random() * result.length)];
         let img = meme.instanceImageUrl;
         let msg = "Here you go <@"+user+"> \u{1F4DD} \n" + img;
-        bot.postMessageToChannel(channel, msg); 
+        sendMessage(ch, msg); 
     });
 }

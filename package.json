@@ -16,6 +16,7 @@
   "author": "Kristian Nørgaard Jensen",
   "license": "ISC",
   "dependencies": {
+    "dotenv": "^6.2.0",
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "giphy-api": "^2.0.1",

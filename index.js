@@ -2,6 +2,7 @@ let slackbot = require('slackbots');
 let giphy = require('giphy-api')();
 let request = require('request');
 let express = require('express');
+require('dotenv').config();
 const path = require('path')
 
 const channel = "random";
@@ -17,7 +18,7 @@ const greetings = [
 
 const memeUrl  = 'http://version1.api.memegenerator.net//Instances_Search?q=';
 const memeUrl1 = '&pageIndex=0&pageSize=12&apiKey=';
-const memeAPI = '1272a57c-be22-4091-b0f5-f01cd30143d3';
+const memeAPI = process.env.MEME_API;
 const PORT = process.env.PORT || 4550;
 let app = express();
 
@@ -31,7 +32,7 @@ app.use(express.static(path.join(__dirname, 'public')))
     });
 
 let bot = new slackbot({
-    token: "xoxb-477272901538-536141309570-8GjXF7ukRQHusPlanVJZoIjG",
+    token: process.env.SLACK_TOKEN,
     name: "Stan"
 });
 

@@ -24,6 +24,10 @@ app.listen(PORT, (err) => {
     console.log(`\n🚀  Starbot LIVES on PORT ${PORT} 🚀`);
 });
 
+app.get('/', (req, res) => {
+    res.render('./index.html');
+});
+
 
 let bot = new slackbot({
     token: "xoxb-477272901538-536141309570-8GjXF7ukRQHusPlanVJZoIjG",

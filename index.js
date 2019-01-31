@@ -13,7 +13,8 @@ const greetings = [
     ":hd: :stan:",
     "Hi \u{1F916}"
 ];
-const memeUrl = 'http://version1.api.memegenerator.net//Instances_Search?q=random&pageIndex=0&pageSize=12&apiKey=';
+const memeUrl  = 'http://version1.api.memegenerator.net//Instances_Search?q=';
+const memeUrl1 = '&pageIndex=0&pageSize=12&apiKey=';
 const memeAPI = '1272a57c-be22-4091-b0f5-f01cd30143d3';
 const PORT = process.env.PORT || 4550;
 let app = express();
@@ -88,7 +89,7 @@ function handleResponse(data) {
             }
         }
         if (text.includes("send a meme") || text.includes("send meme")) {
-            sendMeme(data.user);
+            sendMeme(data.user, 'elon');
         }
     }
 }
@@ -113,8 +114,8 @@ function sendGif(user, category) {
     });
 }
 
-function sendMeme(user) {
-    request(memeUrl + memeAPI, { json: true }, (err, res, body) => {
+function sendMeme(user, category) {
+    request(memeUrl + category + memeUrl1 + memeAPI, { json: true }, (err, res, body) => {
         if (err) { return console.error(err); }
         let result = body.result;
         let meme = result[Math.floor(Math.random() * result.length)];

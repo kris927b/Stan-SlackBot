@@ -82,7 +82,7 @@ function handleResponse(data) {
             } else if (text.includes("with")) {
                 let arr = text.split(" ");
                 let index = arr.findIndex(findWith);
-                sendGif(data.user);
+                sendGif(data.user, arr[index+1]);
             } else {
                 sendGif(data.user, 'random');
             }

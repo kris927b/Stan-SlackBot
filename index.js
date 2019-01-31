@@ -1,8 +1,9 @@
 let slackbot = require('slackbots');
 let giphy = require('giphy-api')();
 let request = require('request');
+let express = require('express');
 
-const channel = "test_bot";
+const channel = "random";
 let user_list = {};
 const greetings = [
     "Hey dude! :stan:", 
@@ -14,6 +15,14 @@ const greetings = [
 ];
 const memeUrl = 'http://version1.api.memegenerator.net//Instances_Search?q=random&pageIndex=0&pageSize=12&apiKey=';
 const memeAPI = '1272a57c-be22-4091-b0f5-f01cd30143d3';
+const PORT = process.env.PORT || 4550;
+let app = express();
+
+app.listen(PORT, (err) => {
+    if (err) { throw err; }
+    console.log(`\n🚀  Starbot LIVES on PORT ${PORT} 🚀`);
+});
+
 
 let bot = new slackbot({
     token: "xoxb-477272901538-536141309570-8GjXF7ukRQHusPlanVJZoIjG",
@@ -21,11 +30,13 @@ let bot = new slackbot({
 });
 
 bot.on("start", () => {
-    // bot.postMessageToGroup(channel, "Hello my dudes!! \u{1F916} \n"+
-    //                                 "I currently respond to 'Hi Stan', 'Hey Stan', 'Hello Stan' and in general if you just mention me!" + 
+    // bot.postMessageToChannel(channel, "Hello my dudes!! \u{1F916} \n"+
+    //                                 "You can invoke me by mentioning me! If you say 'send meme' or 'send gif' + 'of/with (some category)' i will send you one!" + 
+    //                                 "Example: '@Stan send a meme with cat'" +
+    //                                 "You can also just greet me like so 'Hi @Stan'" + 
     //                                 "\u{1F680} \n" + 
     //                                 "So fire away \u{1F525}");
-    console.log("Hello my dudes!! \u{1F916}");
+    //console.log("Hello my dudes!! \u{1F916}");
     let name = '';
     let id = 0;
     let users = bot.getUsers();
@@ -34,7 +45,6 @@ bot.on("start", () => {
         id = user.id;
         user_list[name] = id;
     }
-    // console.log("Stan: " + JSON.stringify(user_list, null, 2));
 });
 
 bot.on("message", (data) => {
@@ -85,7 +95,7 @@ function handleResponse(data) {
 
 function sendGreeting() {
     let greeting = getGreeting();
-    bot.postMessageToGroup(channel, greeting);
+    bot.postMessageToChannel(channel, greeting);
 }
 
 function getGreeting() {
@@ -99,18 +109,17 @@ function sendGif(user, category) {
         }
         let gif = res.data.url;
         let msg = "Here you go <@"+user+"> :robot_face: \n" + gif;
-        bot.postMessageToGroup(channel, msg);
+        bot.postMessageToChannel(channel, msg);
     });
 }
 
 function sendMeme(user) {
     request(memeUrl + memeAPI, { json: true }, (err, res, body) => {
         if (err) { return console.error(err); }
-        // console.log(body);
         let result = body.result;
         let meme = result[Math.floor(Math.random() * result.length)];
         let img = meme.instanceImageUrl;
         let msg = "Here you go <@"+user+"> \u{1F4DD} \n" + img;
-        bot.postMessageToGroup(channel, msg); 
+        bot.postMessageToChannel(channel, msg); 
     });
 }

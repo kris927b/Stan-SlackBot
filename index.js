@@ -13,6 +13,7 @@ const greetings = [
     ":hd: :stan:",
     "Hi \u{1F916}"
 ];
+
 const memeUrl  = 'http://version1.api.memegenerator.net//Instances_Search?q=';
 const memeUrl1 = '&pageIndex=0&pageSize=12&apiKey=';
 const memeAPI = '1272a57c-be22-4091-b0f5-f01cd30143d3';
@@ -25,7 +26,7 @@ app.listen(PORT, (err) => {
 });
 
 app.get('/', (req, res) => {
-    res.render('./index.html');
+    res.render('\u{1F680} This is the Stan SlackBot \u{1F916}');
 });
 
 

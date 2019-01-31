@@ -66,14 +66,6 @@ bot.on("message", (data) => {
     }
 });
 
-function sendMessage(channel, msg) {
-    if (process.env.TEST) {
-        bot.postMessage(channel, msg);
-    } else {
-        bot.postMessage(channel, msg);
-    }
-}
-
 function findWithOf(key) {
     return key === 'of' || key === 'with';
 }
@@ -84,50 +76,54 @@ function handleResponse(data) {
         let text = data.text.toLowerCase();
         console.log(data);
         if (text.includes("hi") || text.includes("hello") || text.includes("hey")) {
-            sendGreeting();
+            sendGreeting(data.channel);
         }
         if (text.includes("send a gif") || text.includes("send gif")) {
-            if (text.includes("of") || text.includes("with")) {
-                let arr = text.split(" ");
-                let index = arr.findIndex(findWithOf);
-                sendGif(data.user, arr[index+1], data.channel);
-            } else {
-                sendGif(data.user, 'random', data.channel);
-            }
-        }
-        if (text.includes("send a meme") || text.includes("send meme")) {
-            sendMeme(data.user, 'elon');
+            sendMessage(getGif, data.channel, data.user);
+        } else if (text.includes("send a meme") || text.includes("send meme")) {
+            sendMessage(getMeme, data.channel, data.user);
         }
     }
 }
 
-function sendGreeting() {
+function sendGreeting(ch) {
     let greeting = getGreeting();
-    sendMessage(channel, greeting);
+    bot.postMessage(ch, greeting);
 }
 
 function getGreeting() {
     return greetings[Math.floor(Math.random() * greetings.length)];
 }
 
-function sendGif(user, category, ch) {
+function getGif(user, category) {
     giphy.random({tag: category, fmt: 'json'}, function (err, res) {
         if (err) {
             console.error(err);
         }
         let gif = res.data.url;
         let msg = "Here you go <@"+user+"> :robot_face: \n" + gif;
-        sendMessage(ch, msg);
+        return msg;
     });
 }
 
-function sendMeme(user, category, ch) {
+function getMeme(user, category) {
     request(memeUrl + category + memeUrl1 + memeAPI, { json: true }, (err, res, body) => {
         if (err) { return console.error(err); }
         let result = body.result;
         let meme = result[Math.floor(Math.random() * result.length)];
         let img = meme.instanceImageUrl;
         let msg = "Here you go <@"+user+"> \u{1F4DD} \n" + img;
-        sendMessage(ch, msg); 
+        return msg; 
     });
+}
+
+function sendMessage(fn, channel, user, channel) {
+    if (text.includes("of") || text.includes("with")) {
+        let arr = text.split(" ");
+        let index = arr.findIndex(findWithOf);
+        let msg = fn(user, arr[index+1]);
+    } else {
+        let msg = fn(user, 'random');
+    }
+    bot.postMessage(channel, msg);
 }

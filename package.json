@@ -1,0 +1,23 @@
+{
+  "name": "slackbot",
+  "version": "1.0.0",
+  "description": "Slackbot for Slack",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [
+    "Slack",
+    "Bot",
+    "SlackBot",
+    "Post"
+  ],
+  "author": "Kristian Nørgaard Jensen",
+  "license": "ISC",
+  "dependencies": {
+    "giphy-api": "^2.0.1",
+    "request": "^2.88.0",
+    "slackbots": "^1.2.0"
+  }
+}

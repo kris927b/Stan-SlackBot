@@ -74,14 +74,13 @@ function handleResponse(data) {
     if (data.text.includes(user_list["stan"])) {
         console.log("Mentioned Stan \u{1F916}");
         let text = data.text.toLowerCase();
-        console.log(data);
         if (text.includes("hi") || text.includes("hello") || text.includes("hey")) {
             sendGreeting(data.channel);
         }
         if (text.includes("send a gif") || text.includes("send gif")) {
-            sendMessage(getGif, data.channel, data.user);
+            sendMessage(getGif, text, data.channel, data.user);
         } else if (text.includes("send a meme") || text.includes("send meme")) {
-            sendMessage(getMeme, data.channel, data.user);
+            sendMessage(getMeme, text, data.channel, data.user);
         }
     }
 }
@@ -117,7 +116,7 @@ function getMeme(user, category) {
     });
 }
 
-function sendMessage(fn, channel, user, channel) {
+function sendMessage(fn, text, channel, user) {
     if (text.includes("of") || text.includes("with")) {
         let arr = text.split(" ");
         let index = arr.findIndex(findWithOf);

@@ -21,11 +21,6 @@ const memeAPI = '1272a57c-be22-4091-b0f5-f01cd30143d3';
 const PORT = process.env.PORT || 4550;
 let app = express();
 
-app.listen(PORT, (err) => {
-    if (err) { throw err; }
-    console.log(`\n🚀  Starbot LIVES on PORT ${PORT} 🚀`);
-});
-
 app.use(express.static(path.join(__dirname, 'public')))
     .set('views', path.join(__dirname, 'views'))
     .set('view engine', 'ejs')

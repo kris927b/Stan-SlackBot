@@ -30,12 +30,12 @@ let bot = new slackbot({
 });
 
 bot.on("start", () => {
-    // bot.postMessageToChannel(channel, "Hello my dudes!! \u{1F916} \n"+
-    //                                 "You can invoke me by mentioning me! If you say 'send meme' or 'send gif' + 'of/with (some category)' i will send you one!" + 
-    //                                 "Example: '@Stan send a meme with cat'" +
-    //                                 "You can also just greet me like so 'Hi @Stan'" + 
-    //                                 "\u{1F680} \n" + 
-    //                                 "So fire away \u{1F525}");
+    bot.postMessageToChannel(channel, "Hello my dudes!! \u{1F916} \n"+
+                                    "You can invoke me by mentioning me! If you say 'send meme' or 'send gif' + 'of/with (some category)' i will send you one!" + 
+                                    "Example: '@Stan send a meme with cat'" +
+                                    "You can also just greet me like so 'Hi @Stan'" + 
+                                    "\u{1F680} \n" + 
+                                    "So fire away \u{1F525}");
     //console.log("Hello my dudes!! \u{1F916}");
     let name = '';
     let id = 0;

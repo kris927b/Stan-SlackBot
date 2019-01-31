@@ -2,6 +2,7 @@ let slackbot = require('slackbots');
 let giphy = require('giphy-api')();
 let request = require('request');
 let express = require('express');
+const path = require('path')
 
 const channel = "random";
 let user_list = {};
@@ -25,10 +26,14 @@ app.listen(PORT, (err) => {
     console.log(`\n🚀  Starbot LIVES on PORT ${PORT} 🚀`);
 });
 
-app.get('/', (req, res) => {
-    res.render('\u{1F680} This is the Stan SlackBot \u{1F916}');
-});
-
+app.use(express.static(path.join(__dirname, 'public')))
+    .set('views', path.join(__dirname, 'views'))
+    .set('view engine', 'ejs')
+    .get('/', (req, res) => res.render('pages/index'))
+    .listen(PORT, (err) => {
+        if (err) { throw err; }
+        console.log(`\n🚀  Stan LIVES on PORT ${PORT} 🚀`);
+    });
 
 let bot = new slackbot({
     token: "xoxb-477272901538-536141309570-8GjXF7ukRQHusPlanVJZoIjG",
@@ -36,12 +41,12 @@ let bot = new slackbot({
 });
 
 bot.on("start", () => {
-    bot.postMessageToChannel(channel, "Hello my dudes!! \u{1F916} \n"+
-                                    "You can invoke me by mentioning me! If you say 'send meme' or 'send gif' + 'of/with (some category)' i will send you one!" + 
-                                    "Example: '@Stan send a meme with cat'" +
-                                    "You can also just greet me like so 'Hi @Stan'" + 
-                                    "\u{1F680} \n" + 
-                                    "So fire away \u{1F525}");
+    // bot.postMessageToChannel(channel, "Hello my dudes!! \u{1F916} \n"+
+    //                                 "You can invoke me by mentioning me! If you say 'send meme' or 'send gif' + 'of/with (some category)' i will send you one!" + 
+    //                                 "Example: '@Stan send a meme with cat'" +
+    //                                 "You can also just greet me like so 'Hi @Stan'" + 
+    //                                 "\u{1F680} \n" + 
+    //                                 "So fire away \u{1F525}");
     //console.log("Hello my dudes!! \u{1F916}");
     let name = '';
     let id = 0;

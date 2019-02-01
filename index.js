@@ -95,35 +95,42 @@ function getGreeting() {
 }
 
 function getGif(user, category) {
+    let msg = '';
     giphy.random({tag: category, fmt: 'json'}, function (err, res) {
         if (err) {
             console.error(err);
         }
         let gif = res.data.url;
-        let msg = "Here you go <@"+user+"> :robot_face: \n" + gif;
-        return msg;
+        msg = "Here you go <@"+user+"> :robot_face: \n" + gif;
+        console.log(msg);
     });
+    return msg;
 }
 
 function getMeme(user, category) {
+    let msg = '';
     request(memeUrl + category + memeUrl1 + memeAPI, { json: true }, (err, res, body) => {
         if (err) { return console.error(err); }
         let result = body.result;
         let meme = result[Math.floor(Math.random() * result.length)];
         let img = meme.instanceImageUrl;
-        let msg = "Here you go <@"+user+"> \u{1F4DD} \n" + img;
-        return msg; 
+        msg = "Here you go <@"+user+"> \u{1F4DD} \n" + img; 
     });
+    return msg;
 }
 
 function sendMessage(fn, text, channel, user) {
-    let msg = ''
+    let msg = 'Hello';
+    console.log(msg);
     if (text.includes("of") || text.includes("with")) {
         let arr = text.split(" ");
         let index = arr.findIndex(findWithOf);
         msg = fn(user, arr[index+1]);
+        console.log(msg);
     } else {
         msg = fn(user, 'random');
+        console.log(msg);
     }
+    console.log(msg);
     bot.postMessage(channel, msg);
 }

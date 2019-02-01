@@ -26,4 +26,4 @@ You are more than welcome to add more features, or feature requests.
 
 - [X] Send Memes (@stan send a meme with cats)
 - [X] Send Gifs (@stan send a gif with dogs)
-
+- [X] Respond to gratitude (Thank you @stan)

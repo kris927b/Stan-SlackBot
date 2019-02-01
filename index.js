@@ -90,6 +90,16 @@ function handleResponse(data) {
             else if (text.includes("meme")) { sendMessage(getMeme, text, data.channel, data.user); }
             else if (text.match(/nudes?/g)) { getImage(data.user, 'female robots', data.channel); }
         }
+        if (text.includes("thank you")) {
+            if (text.includes("love") && text.includes("you")) {
+                let msg = "You're welcome <@"+data.user+"> :stan: \u{1F64B} \n" +
+                            "I love you too \u{1F498}";
+                bot.postMessage(data.channel, msg);
+            } else {
+                let msg = "You're welcome <@"+data.user+"> :stan: \u{1F64B}";
+                bot.postMessage(data.channel, msg);
+            }
+        }
     }
 }
 

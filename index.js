@@ -5,18 +5,10 @@ let express = require('express');
 require('dotenv').config();
 const path = require('path');
 let imageSearch = require('node-google-image-search');
+const responses = require('./data').responses;
 
 
 let user_list = {};
-const greetings = [
-    "Hey dude! :stan:", 
-    "What up! :stan:", 
-    "What do you want? :pgsql:",
-    "Hey man! :stan:",
-    ":hd: :stan:",
-    "Hi \u{1F916}"
-];
-
 const memeUrl  = 'http://version1.api.memegenerator.net//Instances_Search?q=';
 const memeUrl1 = '&pageIndex=0&pageSize=12&apiKey=';
 const memeAPI = process.env.MEME_API;
@@ -75,7 +67,7 @@ function findGreeting(text) {
     return text.includes("hi") || 
             text.includes("hello") || 
             text.includes("hey") ||
-            text.includes("goodday");
+            text.includes("greetings");
 }
 
 function handleResponse(data) {
@@ -90,7 +82,7 @@ function handleResponse(data) {
             else if (text.includes("meme")) { sendMessage(getMeme, text, data.channel, data.user); }
             else if (text.match(/nudes?/g)) { getImage(data.user, 'female robots', data.channel); }
         }
-        if (text.includes("thank you")) {
+        if (text.includes("thank you") || text.includes("thanks")) {
             if (text.includes("love") && text.includes("you")) {
                 let msg = "You're welcome <@"+data.user+"> :stan: \u{1F64B} \n" +
                             "I love you too \u{1F498}";
@@ -109,7 +101,7 @@ function sendGreeting(ch) {
 }
 
 function getGreeting() {
-    return greetings[Math.floor(Math.random() * greetings.length)];
+    return responses.greeting[Math.floor(Math.random() * responses.greeting.length)];
 }
 
 function getGif(user, category, ch) {
@@ -152,7 +144,7 @@ function sendMessage(fn, text, channel, user) {
     if (text.match(/with|of/g)) {
         let arr = text.split(" ");
         let index = arr.findIndex(findWithOf);
-        fn(user, arr[index+1], channel);
+        fn(user, arr.slice(index+1).join(' '), channel);
     } else {
         fn(user, 'random', channel);
     }

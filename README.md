@@ -13,3 +13,8 @@ Then create a '.env' file with your slack token, and an api key for the MemeGene
 
 Next up you want to setup heroku (https://heroku.com), such that you are able to push changes to the server.
 
+When ready to run stan. Run the following command!
+
+```bash
+npm start
+```

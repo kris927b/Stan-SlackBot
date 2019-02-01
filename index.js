@@ -4,6 +4,7 @@ let request = require('request');
 let express = require('express');
 require('dotenv').config();
 const path = require('path');
+let imageSearch = require('node-google-image-search');
 
 
 let user_list = {};
@@ -70,17 +71,24 @@ function findWithOf(key) {
     return key === 'of' || key === 'with';
 }
 
+function findGreeting(text) {
+    return text.includes("hi") || 
+            text.includes("hello") || 
+            text.includes("hey") ||
+            text.includes("goodday");
+}
+
 function handleResponse(data) {
     if (data.text.includes(user_list["stan"])) {
         console.log("Mentioned Stan \u{1F916}");
         let text = data.text.toLowerCase();
-        if (text.includes("hi") || text.includes("hello") || text.includes("hey")) {
+        if (findGreeting(text)) {
             sendGreeting(data.channel);
         }
-        if (text.includes("send a gif") || text.includes("send gif")) {
-            sendMessage(getGif, text, data.channel, data.user);
-        } else if (text.includes("send a meme") || text.includes("send meme")) {
-            sendMessage(getMeme, text, data.channel, data.user);
+        if ((text.includes("send") && text.includes("a")) || text.includes("send a") || text.includes("send me")) {
+            if (text.includes("gif")) { sendMessage(getGif, text, data.channel, data.user); }
+            else if (text.includes("meme")) { sendMessage(getMeme, text, data.channel, data.user); }
+            else if (text.match(/nudes?/g)) { getImage(data.user, 'female robots', data.channel); }
         }
     }
 }
@@ -94,7 +102,7 @@ function getGreeting() {
     return greetings[Math.floor(Math.random() * greetings.length)];
 }
 
-function getGif(user, category) {
+function getGif(user, category, ch) {
     let msg = '';
     giphy.random({tag: category, fmt: 'json'}, function (err, res) {
         if (err) {
@@ -102,12 +110,11 @@ function getGif(user, category) {
         }
         let gif = res.data.url;
         msg = "Here you go <@"+user+"> :robot_face: \n" + gif;
-        console.log(msg);
+        bot.postMessage(ch, msg);
     });
-    return msg;
 }
 
-function getMeme(user, category) {
+function getMeme(user, category, ch) {
     let msg = '';
     request(memeUrl + category + memeUrl1 + memeAPI, { json: true }, (err, res, body) => {
         if (err) { return console.error(err); }
@@ -115,22 +122,28 @@ function getMeme(user, category) {
         let meme = result[Math.floor(Math.random() * result.length)];
         let img = meme.instanceImageUrl;
         msg = "Here you go <@"+user+"> \u{1F4DD} \n" + img; 
+        bot.postMessage(ch, msg);
     });
-    return msg;
+}
+
+function getImage(user, category, ch) {
+    let msg = '';
+    let rnd = Math.floor(Math.random() * 99);
+    imageSearch(category, (results) => {
+        let img = results[0].link;
+        msg = "Here you go <@"+user+"> \u{1F4DD} \n" + img; 
+        bot.postMessage(ch, msg);
+    }, rnd, 1);
 }
 
 function sendMessage(fn, text, channel, user) {
-    let msg = 'Hello';
+    let msg = '';
     console.log(msg);
-    if (text.includes("of") || text.includes("with")) {
+    if (text.match(/with|of/g)) {
         let arr = text.split(" ");
         let index = arr.findIndex(findWithOf);
-        msg = fn(user, arr[index+1]);
-        console.log(msg);
+        fn(user, arr[index+1], channel);
     } else {
-        msg = fn(user, 'random');
-        console.log(msg);
+        fn(user, 'random', channel);
     }
-    console.log(msg);
-    bot.postMessage(channel, msg);
 }

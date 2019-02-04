@@ -12,7 +12,7 @@ let user_list = {};
 const memeUrl  = 'http://version1.api.memegenerator.net//Instances_Search?q=';
 const memeUrl1 = '&pageIndex=0&pageSize=12&apiKey=';
 const memeAPI = process.env.MEME_API;
-const PORT = process.env.PORT || 4550;
+const PORT = process.env.PORT || 4000;
 let app = express();
 
 app.use(express.static(path.join(__dirname, 'public')))
@@ -88,8 +88,9 @@ function handleResponse(data) {
                             "I love you too \u{1F498}";
                 bot.postMessage(data.channel, msg);
             } else {
-                let msg = "You're welcome <@"+data.user+"> :stan: \u{1F64B}";
-                bot.postMessage(data.channel, msg);
+                let usr = " <@"+data.user+">";
+                let msg = responses.thanks[Math.floor(Math.random() * responses.thanks.length)];
+                bot.postMessage(data.channel, msg + usr);
             }
         }
     }

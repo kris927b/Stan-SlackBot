@@ -6,6 +6,8 @@ require('dotenv').config();
 const path = require('path');
 let imageSearch = require('node-google-image-search');
 const responses = require('./data').responses;
+let haiku = require('haiku-random');  
+let TTS = require('say');  
 
 
 let user_list = {};
@@ -14,6 +16,10 @@ const memeUrl1 = '&pageIndex=0&pageSize=12&apiKey=';
 const memeAPI = process.env.MEME_API;
 const PORT = process.env.PORT || 4000;
 let app = express();
+const params = {
+    'slackbot': true, 
+    icon_emoji: ':stan:'
+};
 
 app.use(express.static(path.join(__dirname, 'public')))
     .set('views', path.join(__dirname, 'views'))
@@ -81,24 +87,40 @@ function handleResponse(data) {
             if (text.includes("gif")) { sendMessage(getGif, text, data.channel, data.user); }
             else if (text.includes("meme")) { sendMessage(getMeme, text, data.channel, data.user); }
             else if (text.match(/nudes?/g)) { getImage(data.user, 'female robots', data.channel); }
+            else if (text.includes("poem")) { 
+                let usr = "Here you go <@"+data.user+">: \n";
+                let msg = haiku.random("json").join('\n');
+                bot.postMessage(data.channel, usr + msg, params);
+            }
         }
         if (text.includes("thank you") || text.includes("thanks")) {
             if (text.includes("love") && text.includes("you")) {
                 let msg = "You're welcome <@"+data.user+"> :stan: \u{1F64B} \n" +
                             "I love you too \u{1F498}";
-                bot.postMessage(data.channel, msg);
+                bot.postMessage(data.channel, msg, params);
             } else {
                 let usr = " <@"+data.user+">";
                 let msg = responses.thanks[Math.floor(Math.random() * responses.thanks.length)];
-                bot.postMessage(data.channel, msg + usr);
+                bot.postMessage(data.channel, msg + usr, params);
             }
+        }
+        if (text.includes("tell me a joke") || text.includes("tell a joke")) {
+            let usr = "Okay <@"+data.user+">: ";
+            let msg = responses.jokes[Math.floor(Math.random() * responses.jokes.length)];
+            bot.postMessage(data.channel, usr + msg, params);
+        }
+        if (text.includes("pick me up") || text.includes("pickup line")) {
+            let usr = "Hey <@"+data.user+"> \n";
+            let msg = responses.pickup[Math.floor(Math.random() * responses.pickup.length)];
+            //TTS.speak(msg, 'Alex');
+            bot.postMessage(data.channel, usr + msg, params);
         }
     }
 }
 
 function sendGreeting(ch) {
     let greeting = getGreeting();
-    bot.postMessage(ch, greeting);
+    bot.postMessage(ch, greeting, params);
 }
 
 function getGreeting() {
@@ -113,7 +135,7 @@ function getGif(user, category, ch) {
         }
         let gif = res.data.url;
         msg = "Here you go <@"+user+"> :robot_face: \n" + gif;
-        bot.postMessage(ch, msg);
+        bot.postMessage(ch, msg, params);
     });
 }
 
@@ -125,7 +147,7 @@ function getMeme(user, category, ch) {
         let meme = result[Math.floor(Math.random() * result.length)];
         let img = meme.instanceImageUrl;
         msg = "Here you go <@"+user+"> \u{1F4DD} \n" + img; 
-        bot.postMessage(ch, msg);
+        bot.postMessage(ch, msg, params);
     });
 }
 

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Slackbot for Slack",
   "main": "index.js",
+  "homepage": "https://github.com/kris927b/Stan-SlackBot",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node index.js"
@@ -11,7 +12,8 @@
     "Slack",
     "Bot",
     "SlackBot",
-    "Post"
+    "Post",
+    "Stanbot"
   ],
   "author": "Kristian Nørgaard Jensen",
   "license": "GNU",
@@ -20,8 +22,10 @@
     "ejs": "^2.6.1",
     "express": "^4.16.4",
     "giphy-api": "^2.0.1",
+    "haiku-random": "^1.0.0",
     "node-google-image-search": "^1.0.3",
     "request": "^2.88.0",
+    "say": "^0.15.0",
     "slackbots": "^1.2.0"
   }
 }

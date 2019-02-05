@@ -19,7 +19,7 @@ When ready to run stan. Run the following command!
 npm start
 ```
 
-## Features 
+## Features
 
 This is a list of current features and comming features.  
 You are more than welcome to add more features, or feature requests.
@@ -27,3 +27,6 @@ You are more than welcome to add more features, or feature requests.
 - [X] Send Memes (@stan send a meme with cats)
 - [X] Send Gifs (@stan send a gif with dogs)
 - [X] Respond to gratitude (Thank you @stan)
+- [X] Tell a joke (@stan tell me a joke)
+- [X] Send a pickup line (@stan pick me up)
+- [X] Send a poem (@stan send a poem)

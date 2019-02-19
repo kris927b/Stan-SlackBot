@@ -134,6 +134,26 @@ const messages = {
         "hello",
         "hey",
         "greetings"
+    ],
+    "return": [
+        "Here you go <@{0}>! {1} \n {2}",
+        "Sure thing <@{0}>! {1} \n {2}",
+        "There you go <@{0}>! {1} \n {2}"
+    ],
+    "emojis": [
+        "\u{1F335}",
+        "\u{1F4C5}",
+        "\u{2708}",
+        "\u{2697}",
+        "\u{1F620}",
+        "\u{1F504}",
+        "\u{1F916}",
+        "\u{1F339}",
+        "\u{1F6A3}",
+        "\u{1F3C3}",
+        ":stan:",
+        ":hd:",
+        ":db"
     ]
 }
 

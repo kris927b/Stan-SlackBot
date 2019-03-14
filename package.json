@@ -1,5 +1,5 @@
 {
-  "name": "slackbot",
+  "name": "stanslackbot",
   "version": "1.0.0",
   "description": "Slackbot for Slack",
   "main": "./src/javascript/index.js",
@@ -9,7 +9,6 @@
     "clean": "rimraf ./src/javascript",
     "dev": "npm-run-all --parallel watch:build watch:server --print-label",
     "start": "node './src/javascript/index.js'",
-    "build": "tsc",
     "watch:build": "tsc --watch",
     "watch:server": "nodemon './src/javascript/index.js' --watch './src/javascript'"
   },

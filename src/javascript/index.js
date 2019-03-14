@@ -3,10 +3,11 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var dotenv = require("dotenv");
 var express = require("express");
 var path = require("path");
+var favicon = require("serve-favicon");
 var bot_1 = require("./bot");
 dotenv.config();
 var app = express();
-app.use(express.static(path.join(__dirname, 'public')))
+app.use(express.static(path.join(__dirname, 'public')), favicon(path.join('./views', 'favicon', 'favicon.ico')))
     .set('views', path.join('./', 'views'))
     .set('view engine', 'ejs')
     .get('/', function (req, res) { return res.render('pages/index'); })

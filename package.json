@@ -31,6 +31,7 @@
     "node-google-image-search": "^1.0.3",
     "request": "^2.88.0",
     "say": "^0.15.0",
+    "serve-favicon": "^2.5.0",
     "slackbots": "^1.2.0",
     "typescript-string-operations": "^1.3.1"
   },

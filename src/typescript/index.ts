@@ -6,7 +6,7 @@ import { Bot } from './bot';
 dotenv.config();
 let app = express();
 app.use(express.static(path.join(__dirname, 'public')))
-    .set('views', path.join(__dirname, 'views'))
+    .set('views', path.join('./', 'views'))
     .set('view engine', 'ejs')
     .get('/', (req, res) => res.render('pages/index'))
     .listen(process.env.PORT, (err) => {

@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rimraf ./src/javascript",
     "dev": "npm-run-all --parallel watch:build watch:server --print-label",
-    "start": "npm-run-all run:* --print-label",
+    "start": "npm-run-all run:*",
     "watch:build": "tsc --watch",
     "watch:server": "nodemon './src/javascript/index.js' --watch './src/javascript'",
     "run:build": "tsc",

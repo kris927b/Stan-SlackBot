@@ -1,5 +1,6 @@
 # Keys
 *.env
+.env
 
 # Node
 node_modules/

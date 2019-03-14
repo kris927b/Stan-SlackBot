@@ -7,7 +7,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "clean": "rimraf ./src/javascript",
-    "start": "npm-run-all clean --parallel watch:build watch:server --print-label",
+    "start": "npm-run-all --parallel watch:build watch:server --print-label",
     "watch:build": "tsc --watch",
     "watch:server": "nodemon './src/javascript/index.js' --watch './src/javascript'"
   },

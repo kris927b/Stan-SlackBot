@@ -4,6 +4,7 @@ import * as request from 'request';
 import * as gip from 'giphy-api';
 import * as imageSearch from 'node-google-image-search';
 import { Format } from './utils';
+import * as haiku from 'haiku-random';
 
 let giphy = gip();
 
@@ -51,7 +52,10 @@ class Bot {
                     if (text.includes("meme")) { this.sendMeme(text, channel, user); }
                     if (text.includes("gif")) { this.sendGif(text, channel, user); }
                     if (text.match(/nudes?/g)) { this.sendImage(user, channel); }
+                    if (text.includes("poem")) { this.sendPoem(user, channel); }
                 }
+                if (text.includes("tell me a joke") || text.includes("tell a joke")) { this.tellJoke(user, channel); }
+                if (text.includes("pick me up") || text.includes("pickup line")) { this.pickupLine(user, channel); }
             }
         } catch (err) {
             console.log('TypeError! \u{1F996}');
@@ -59,12 +63,13 @@ class Bot {
     }
 
     findGreeting(text: string): boolean {
+        let greeting: boolean = false;
         messages.greeting.forEach(greet => {
             if (text.includes(greet)) {
-                return true;
+                greeting = true;
             }
         });
-        return false;
+        return greeting;
     }
 
     findRequest(text: string): boolean {
@@ -90,7 +95,7 @@ class Bot {
     }
 
     sendGreeting(channel: string): void {
-        let greet = responses.greeting[Math.floor(Math.random() * responses.greeting.length)];
+        let greet: string = responses.greeting[Math.floor(Math.random() * responses.greeting.length)];
         this.slack.postMessage(channel, greet, this.params);
     }
 
@@ -100,14 +105,8 @@ class Bot {
         let url: string = Format(this.api, args);
         request(url, { json: true }, (err, res, body) => {
             if (err) { return console.error(err); }
-            let result = body.result;
-            let meme = result[Math.floor(Math.random() * result.length)];
-            let img = meme.instanceImageUrl;
-            let msg = messages.return[Math.floor(Math.random() * messages.return.length)];
-            let emoji = messages.emojis[Math.floor(Math.random() * messages.emojis.length)];
-            let args: Array<string> = [user, emoji, img]
-            msg = Format(msg, args);
-            this.slack.postMessage(channel, msg, this.params);
+            let meme = body.result[Math.floor(Math.random() * body.result.length)].instanceImageUrl;
+            this.postMsg(meme, channel, user);
         });
     }
 
@@ -116,11 +115,7 @@ class Bot {
         giphy.random({tag: cat, fmt: 'json'}, (err, res) => {
             if (err) { return console.error(err); }
             let gif = res.data.url;
-            let msg = messages.return[Math.floor(Math.random() * messages.return.length)];
-            let emoji = messages.emojis[Math.floor(Math.random() * messages.emojis.length)];
-            let args: Array<string> = [user, emoji, gif]
-            msg = Format(msg, args);
-            this.slack.postMessage(channel, msg, this.params);
+            this.postMsg(gif, channel, user);
         });
     }
 
@@ -128,12 +123,31 @@ class Bot {
         let rnd: number = Math.floor(Math.random() * 99);
         imageSearch('female robots', (results) => {
             let img: string = results[0].link;
-            let msg = messages.return[Math.floor(Math.random() * messages.return.length)];
-            let emoji = messages.emojis[Math.floor(Math.random() * messages.emojis.length)];
-            let args: Array<string> = [user, emoji, img];
-            msg = Format(msg, args);
-            this.slack.postMessage(channel, msg, this.params);
+            this.postMsg(img, channel, user);
         }, rnd, 1);
+    }
+
+    sendPoem(user: string, channel: string): void {
+        let poem: string = haiku.random("json").join('\n');
+        this.postMsg(poem, channel, user);
+    }
+
+    tellJoke(user: string, channel: string): void {
+        let joke: string = responses.jokes[Math.floor(Math.random() * responses.jokes.length)];
+        this.postMsg(joke, channel, user);
+    }
+
+    pickupLine(user: string, channel: string): void {
+        let pickup: string = responses.pickup[Math.floor(Math.random() * responses.pickup.length)];
+        this.postMsg(pickup, channel, user);
+    }
+
+    postMsg(attr: string, channel: string, user: string): void {
+        let msg: string = messages.return[Math.floor(Math.random() * messages.return.length)];
+        let emoji: string = messages.emojis[Math.floor(Math.random() * messages.emojis.length)];
+        let args: Array<string> = [user, emoji, attr];
+        msg = Format(msg, args);
+        this.slack.postMessage(channel, msg, this.params);
     }
 }
 

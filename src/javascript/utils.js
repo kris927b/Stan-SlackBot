@@ -8,3 +8,16 @@ function Format(str, args) {
     return a;
 }
 exports.Format = Format;
+function getCityName(text) {
+    if (text.includes("in")) {
+        var arr = text.split(" ");
+        var index = arr.findIndex(function (key) {
+            return key === "in";
+        });
+        return arr.slice(index + 1).join(" ");
+    }
+    else {
+        return "Copenhagen";
+    }
+}
+exports.getCityName = getCityName;

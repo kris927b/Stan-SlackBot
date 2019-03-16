@@ -1,27 +1,26 @@
 import * as slackbot from 'slackbots';
-import { params, botparam, userId, userName, slackResponse, responses, messages } from './data';
+import * as data from './data';
 import * as request from 'request';
 import * as gip from 'giphy-api';
 import * as imageSearch from 'node-google-image-search';
-import { Format } from './utils';
+import * as utils from './utils';
 import * as haiku from 'haiku-random';
 
 let giphy = gip();
 
 class Bot {
     Name: string;
-    params: params;
-    botparams: botparam;
+    params: data.params;
+    botparams: data.botparam;
     slack: slackbot;
-    user_name_id: userId;
-    user_id_name: userName;
+    user_name_id: data.userId;
+    user_id_name: data.userName;
     api: string
-    constructor(name: string, botparm: botparam, parm: params) {
+    constructor(name: string, botparm: data.botparam, parm: data.params) {
         this.Name = name;
         this.params = parm;
         this.botparams = botparm;
         this.slack = new slackbot(this.botparams);
-        this.api = "http://version1.api.memegenerator.net//Instances_Search?q={0}&pageIndex=0&pageSize=12&apiKey={1}";
         this.user_id_name = {};
         this.user_name_id = {};
 
@@ -32,7 +31,7 @@ class Bot {
                 this.user_name_id[user.name] = user.id;
             });
         });
-        this.slack.on("message", (data : slackResponse) => {
+        this.slack.on("message", (data : data.slackResponse) => {
             let type : string = data.type;
             let user : string = data.user;
             if (type === "message" && user !== this.user_name_id['stan']) {
@@ -56,6 +55,10 @@ class Bot {
                 }
                 if (text.includes("tell me a joke") || text.includes("tell a joke")) { this.tellJoke(user, channel); }
                 if (text.includes("pick me up") || text.includes("pickup line")) { this.pickupLine(user, channel); }
+                if (text.includes("what's the weather") || 
+                    text.includes("what is the weather") ||
+                    text.includes("how's the weather") ||
+                    text.includes("how is the weather")) { this.getWeatherInfo(text, user, channel) }
             }
         } catch (err) {
             console.log('TypeError! \u{1F996}');
@@ -64,7 +67,7 @@ class Bot {
 
     findGreeting(text: string): boolean {
         let greeting: boolean = false;
-        messages.greeting.forEach(greet => {
+        data.messages.greeting.forEach(greet => {
             if (text.includes(greet)) {
                 greeting = true;
             }
@@ -80,14 +83,12 @@ class Bot {
         return false;
     }
 
-    findWithOf(key: string): boolean {
-        return key === 'of' || key === 'with';
-    }
-
     getCategory(text: string): string {
         if (text.match(/with|of/g)) {
             let arr = text.split(" ");
-            let index = arr.findIndex(this.findWithOf);
+            let index = arr.findIndex((key: string) => {
+                return key === 'of' || key === 'with';
+            });
             return arr.slice(index+1).join(' ');
         } else {
             return 'random';
@@ -95,14 +96,14 @@ class Bot {
     }
 
     sendGreeting(channel: string): void {
-        let greet: string = responses.greeting[Math.floor(Math.random() * responses.greeting.length)];
+        let greet: string = data.responses.greeting[Math.floor(Math.random() * data.responses.greeting.length)];
         this.slack.postMessage(channel, greet, this.params);
     }
 
     sendMeme(text: string, channel: string, user: string): void {
         let cat: string = this.getCategory(text);
         let args: Array<string> = [cat, process.env.MEME_API];
-        let url: string = Format(this.api, args);
+        let url: string = utils.Format(data.api.memeGenerator, args);
         request(url, { json: true }, (err, res, body) => {
             if (err) { return console.error(err); }
             let meme = body.result[Math.floor(Math.random() * body.result.length)].instanceImageUrl;
@@ -133,20 +134,37 @@ class Bot {
     }
 
     tellJoke(user: string, channel: string): void {
-        let joke: string = responses.jokes[Math.floor(Math.random() * responses.jokes.length)];
+        let joke: string = data.responses.jokes[Math.floor(Math.random() * data.responses.jokes.length)];
         this.postMsg(joke, channel, user);
     }
 
     pickupLine(user: string, channel: string): void {
-        let pickup: string = responses.pickup[Math.floor(Math.random() * responses.pickup.length)];
+        let pickup: string = data.responses.pickup[Math.floor(Math.random() * data.responses.pickup.length)];
         this.postMsg(pickup, channel, user);
     }
 
+    getWeatherInfo(text: string, user: string, channel: string): void {
+        // Extract the city name from text
+        let city: string = utils.getCityName(text);
+        console.log(city);
+        // Create url for weathermap request
+        let args: Array<string> = [city, process.env.WEATHER_MAP_API];
+        let url: string = utils.Format(data.api.weatherMap, args);
+        // Request weather data from weathermap
+        request(url, { json: true }, (err, res, body) => {
+            if (err) { console.error(err); }
+            let weather = body;
+            // Format mesage to post to slack
+            let attr: string = `${weather.main.temp} C degrees and ${weather.weather[0].description}`;
+            this.postMsg(attr, channel, user);
+        });
+    }
+
     postMsg(attr: string, channel: string, user: string): void {
-        let msg: string = messages.return[Math.floor(Math.random() * messages.return.length)];
-        let emoji: string = messages.emojis[Math.floor(Math.random() * messages.emojis.length)];
+        let msg: string = data.messages.return[Math.floor(Math.random() * data.messages.return.length)];
+        let emoji: string = data.messages.emojis[Math.floor(Math.random() * data.messages.emojis.length)];
         let args: Array<string> = [user, emoji, attr];
-        msg = Format(msg, args);
+        msg = utils.Format(msg, args);
         this.slack.postMessage(channel, msg, this.params);
     }
 }

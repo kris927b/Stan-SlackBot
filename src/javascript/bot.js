@@ -37,10 +37,10 @@ var Bot = /** @class */ (function () {
             if (text.includes(this.user_name_id['stan'])) {
                 text = text.toLowerCase();
                 console.log("Mentioned Stan \uD83E\uDD16");
-                if (this.findGreeting(text)) {
+                if (utils.findGreeting(text)) {
                     this.sendGreeting(channel);
                 }
-                if (this.findRequest(text)) {
+                if (utils.findRequest(text)) {
                     if (text.includes("meme")) {
                         this.sendMeme(text, channel, user);
                     }
@@ -66,38 +66,11 @@ var Bot = /** @class */ (function () {
                     text.includes("how is the weather")) {
                     this.getWeatherInfo(text, user, channel);
                 }
+                this.useCakeChat(text, channel);
             }
         }
         catch (err) {
             console.log("TypeError! \uD83E\uDD96");
-        }
-    };
-    Bot.prototype.findGreeting = function (text) {
-        var greeting = false;
-        data.messages.greeting.forEach(function (greet) {
-            if (text.includes(greet)) {
-                greeting = true;
-            }
-        });
-        return greeting;
-    };
-    Bot.prototype.findRequest = function (text) {
-        if ((text.includes("send") && text.includes("a")) ||
-            text.includes("send a") || text.includes("send me")) {
-            return true;
-        }
-        return false;
-    };
-    Bot.prototype.getCategory = function (text) {
-        if (text.match(/with|of/g)) {
-            var arr = text.split(" ");
-            var index = arr.findIndex(function (key) {
-                return key === 'of' || key === 'with';
-            });
-            return arr.slice(index + 1).join(' ');
-        }
-        else {
-            return 'random';
         }
     };
     Bot.prototype.sendGreeting = function (channel) {
@@ -106,20 +79,25 @@ var Bot = /** @class */ (function () {
     };
     Bot.prototype.sendMeme = function (text, channel, user) {
         var _this = this;
-        var cat = this.getCategory(text);
+        var cat = utils.getCategory(text);
         var args = [cat, process.env.MEME_API];
         var url = utils.Format(data.api.memeGenerator, args);
         request(url, { json: true }, function (err, res, body) {
             if (err) {
                 return console.error(err);
             }
-            var meme = body.result[Math.floor(Math.random() * body.result.length)].instanceImageUrl;
-            _this.postMsg(meme, channel, user);
+            try {
+                var meme = body.result[Math.floor(Math.random() * body.result.length)].instanceImageUrl;
+                _this.postMsg(meme, channel, user);
+            }
+            catch (error) {
+                _this.slack.postMessage(channel, "Sorry <@" + user + ">! I can't find a meme with " + cat, _this.params);
+            }
         });
     };
     Bot.prototype.sendGif = function (text, channel, user) {
         var _this = this;
-        var cat = this.getCategory(text);
+        var cat = utils.getCategory(text);
         giphy.random({ tag: cat, fmt: 'json' }, function (err, res) {
             if (err) {
                 return console.error(err);
@@ -165,6 +143,24 @@ var Bot = /** @class */ (function () {
             // Format mesage to post to slack
             var attr = weather.main.temp + " C degrees and " + weather.weather[0].description;
             _this.postMsg(attr, channel, user);
+        });
+    };
+    Bot.prototype.useCakeChat = function (text, channel) {
+        var _this = this;
+        var options = {
+            uri: 'http://localhost:8080/cakechat_api/v1/actions/get_response',
+            method: 'POST',
+            json: {
+                context: [text],
+                emotion: 'neutral'
+            }
+        };
+        request(options, function (err, res, body) {
+            if (err) {
+                console.error(err);
+            }
+            console.log(body);
+            _this.slack.postMessage(channel, body.response, _this.params);
         });
     };
     Bot.prototype.postMsg = function (attr, channel, user) {

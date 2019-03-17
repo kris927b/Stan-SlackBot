@@ -15,7 +15,6 @@ class Bot {
     slack: slackbot;
     user_name_id: data.userId;
     user_id_name: data.userName;
-    api: string
     constructor(name: string, botparm: data.botparam, parm: data.params) {
         this.Name = name;
         this.params = parm;
@@ -46,8 +45,8 @@ class Bot {
             if (text.includes(this.user_name_id['stan'])) {
                 text = text.toLowerCase();
                 console.log("Mentioned Stan \u{1F916}");
-                if (this.findGreeting(text)) { this.sendGreeting(channel); }
-                if (this.findRequest(text)) { 
+                if (utils.findGreeting(text)) { this.sendGreeting(channel); }
+                if (utils.findRequest(text)) { 
                     if (text.includes("meme")) { this.sendMeme(text, channel, user); }
                     if (text.includes("gif")) { this.sendGif(text, channel, user); }
                     if (text.match(/nudes?/g)) { this.sendImage(user, channel); }
@@ -59,39 +58,10 @@ class Bot {
                     text.includes("what is the weather") ||
                     text.includes("how's the weather") ||
                     text.includes("how is the weather")) { this.getWeatherInfo(text, user, channel) }
+                this.useCakeChat(text, channel);
             }
         } catch (err) {
             console.log('TypeError! \u{1F996}');
-        }
-    }
-
-    findGreeting(text: string): boolean {
-        let greeting: boolean = false;
-        data.messages.greeting.forEach(greet => {
-            if (text.includes(greet)) {
-                greeting = true;
-            }
-        });
-        return greeting;
-    }
-
-    findRequest(text: string): boolean {
-        if ((text.includes("send") && text.includes("a")) || 
-            text.includes("send a") || text.includes("send me")) {
-            return true;
-        }
-        return false;
-    }
-
-    getCategory(text: string): string {
-        if (text.match(/with|of/g)) {
-            let arr = text.split(" ");
-            let index = arr.findIndex((key: string) => {
-                return key === 'of' || key === 'with';
-            });
-            return arr.slice(index+1).join(' ');
-        } else {
-            return 'random';
         }
     }
 
@@ -101,18 +71,22 @@ class Bot {
     }
 
     sendMeme(text: string, channel: string, user: string): void {
-        let cat: string = this.getCategory(text);
+        let cat: string = utils.getCategory(text);
         let args: Array<string> = [cat, process.env.MEME_API];
         let url: string = utils.Format(data.api.memeGenerator, args);
         request(url, { json: true }, (err, res, body) => {
             if (err) { return console.error(err); }
-            let meme = body.result[Math.floor(Math.random() * body.result.length)].instanceImageUrl;
-            this.postMsg(meme, channel, user);
+            try {
+                let meme = body.result[Math.floor(Math.random() * body.result.length)].instanceImageUrl;
+                this.postMsg(meme, channel, user);
+            } catch (error) {
+                this.slack.postMessage(channel, `Sorry <@${user}>! I can't find a meme with ${cat}`, this.params);
+            }
         });
     }
 
     sendGif(text: string, channel: string, user: string): void {
-        let cat: string = this.getCategory(text);
+        let cat: string = utils.getCategory(text);
         giphy.random({tag: cat, fmt: 'json'}, (err, res) => {
             if (err) { return console.error(err); }
             let gif = res.data.url;
@@ -157,6 +131,22 @@ class Bot {
             // Format mesage to post to slack
             let attr: string = `${weather.main.temp} C degrees and ${weather.weather[0].description}`;
             this.postMsg(attr, channel, user);
+        });
+    }
+
+    useCakeChat(text: string, channel: string): void {
+        let options: data.cakechat = {
+            uri: 'http://localhost:8080/cakechat_api/v1/actions/get_response',
+            method: 'POST',
+            json: {
+                context: [text],
+                emotion: 'neutral'
+            }
+        };
+        request(options, (err, res, body) => {
+            if (err) { console.error(err); }
+            console.log(body);
+            this.slack.postMessage(channel, body.response, this.params);
         });
     }
 

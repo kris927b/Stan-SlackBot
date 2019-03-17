@@ -24,6 +24,15 @@ interface slackResponse {
     [key: string]: any
 }
 
+interface cakechat {
+    uri: string,
+    method: string,
+    json: {
+        context: Array<string>,
+        emotion: string
+    }
+}
+
 const api = {
     "memeGenerator": "http://version1.api.memegenerator.net//Instances_Search?q={0}&pageIndex=0&pageSize=12&apiKey={1}",
     "weatherMap": "http://api.openweathermap.org/data/2.5/weather?q={0}&units=metric&appid={1}",
@@ -169,4 +178,5 @@ export { params,
         slackResponse, 
         responses,
         messages,
-        api }
+        api,
+        cakechat }

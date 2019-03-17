@@ -10,6 +10,7 @@ npm install
 ```
 
 Then create a '.env' file with your slack token, and an api key for the [MemeGenerator](http://version1.api.memegenerator.net/) API. You can register a bot and get a slack token [here](https://instance.slack.com/services/new/bot)
+To make the weather functionalty work you will need an API key from [OpenWeatherMap](https://openweathermap.org/api)
 
 Next up you want to setup heroku (https://heroku.com), such that you are able to push changes to the server.
 
@@ -30,3 +31,5 @@ You are more than welcome to add more features, or feature requests.
 - [X] Tell a joke (@stan tell me a joke)
 - [X] Send a pickup line (@stan pick me up)
 - [X] Send a poem (@stan send a poem)
+- [X] Give weather informations (@stan how's the weather in {city})
+- [ ] Fallback onto Neural chatbot

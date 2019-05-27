@@ -136,7 +136,7 @@ class Bot {
 
     useCakeChat(text: string, channel: string): void {
         let options: data.cakechat = {
-            uri: 'http://localhost:8080/cakechat_api/v1/actions/get_response',
+            uri: 'https://cakechat-api.herokuapp.com/cakechat_api/v1/actions/get_response',
             method: 'POST',
             json: {
                 context: [text],

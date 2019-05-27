@@ -148,7 +148,7 @@ var Bot = /** @class */ (function () {
     Bot.prototype.useCakeChat = function (text, channel) {
         var _this = this;
         var options = {
-            uri: 'http://localhost:8080/cakechat_api/v1/actions/get_response',
+            uri: 'https://cakechat-api.herokuapp.com/cakechat_api/v1/actions/get_response',
             method: 'POST',
             json: {
                 context: [text],
